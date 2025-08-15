@@ -1,3 +1,5 @@
+package edsim.jenetics;
+
 import io.jenetics.*;
 
 public class SlotGene implements Gene<Integer, SlotGene>

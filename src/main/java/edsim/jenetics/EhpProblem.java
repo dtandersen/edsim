@@ -1,3 +1,4 @@
+package edsim.jenetics;
 
 import static io.jenetics.engine.EvolutionResult.toBestPhenotype;
 import java.util.*;

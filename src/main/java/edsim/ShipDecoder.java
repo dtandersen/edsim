@@ -1,4 +1,9 @@
+package edsim;
+
 import java.util.*;
+import edsim.entity.*;
+import edsim.entity.Module;
+import edsim.repo.*;
 
 public class ShipDecoder
 {
@@ -15,7 +20,11 @@ public class ShipDecoder
     public Ship decode(ShipSpec spec, List<Integer> data)
     {
         Ship ship = new Ship();
-        ship.hullMod = blueprints.get(data.get(0));
+        ship.hull = Module.builder()
+            .withType(ModuleType.ARMOUR)
+            .withBlueprint(blueprints.get(data.get(0)))
+            .withExperimental(experimentals.get(data.get(0)))
+            .build();
         return ship;
     }
 }

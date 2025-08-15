@@ -30,6 +30,7 @@
         "org.hamcrest.Matchers.*",
         "org.hamcrest.MatcherAssert.*",
         "io.jenetics.engine.EvolutionResult.*",
+        "edsim.Matchers.*",
     ],
     "java.debug.settings.onBuildFailureProceed": true,
     "java.test.defaultConfig": "base",
