@@ -19,33 +19,19 @@ public class Effects
             .build());
     }
 
-    public Effect get(int index)
+    public Effect findById(int id)
     {
-        return modules.get(index);
+        return modules.stream()
+            .filter(effect -> effect.getId() == id)
+            .findFirst()
+            .orElseThrow(() -> new NoSuchElementException("No effect found for index: " + id));
     }
 
-    @Deprecated
-    public int get(String string)
+    public Effect findByName(ModuleType type, String name)
     {
-        for (int i = 0; i < modules.size(); i++)
-        {
-            if (modules.get(i).getName().equals(string))
-            {
-                return i;
-            }
-        }
-        throw new NoSuchElementException("No blueprint found with name: " + string);
-    }
-
-    public Effect getByName(String name)
-    {
-        for (int i = 0; i < modules.size(); i++)
-        {
-            if (modules.get(i).getName().equals(name))
-            {
-                return modules.get(i);
-            }
-        }
-        throw new NoSuchElementException("No blueprint found with name: " + name);
+        return modules.stream()
+            .filter(effect -> effect.getType() == type && effect.getName().equals(name))
+            .findFirst()
+            .orElseThrow(() -> new NoSuchElementException("No effect found for type: " + type + " and name: " + name));
     }
 }

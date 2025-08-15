@@ -1,14 +1,20 @@
 package edsim;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import org.hamcrest.*;
 import edsim.entity.*;
 import edsim.entity.Module;
 
 public class Matchers
 {
-    public static Matcher<Effect> equalToEffect(Effect effect)
+    public static Matcher<? super Effect> equalToEffect(Effect effect)
     {
+        if (effect == null)
+        {
+            return nullValue();
+        }
+
         return ComposeBuilder.of(Effect.class)
             .withFeature("name", Effect::getName, effect.getName())
             .withFeature("type", Effect::getType, effect.getType())
@@ -24,7 +30,7 @@ public class Matchers
         Module module = moduleBuilder.build();
 
         return ComposeBuilder.of(Module.class)
-            .withFeature("type", Module::getType, equalTo(ModuleType.ARMOUR))
+            .withFeature("type", Module::getType, equalTo(module.getType()))
             .withFeature("blueprint", Module::getBlueprint, equalToEffect(module.getBlueprint()))
             .withFeature("experimental", Module::getExperimental, equalToEffect(module.getExperimental()))
             .build();

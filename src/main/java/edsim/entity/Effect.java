@@ -3,10 +3,15 @@ package edsim.entity;
 import lombok.*;
 
 @Builder(setterPrefix = "with")
+@ToString
 public class Effect
 {
     @Getter
     private int id;
+
+    @Getter
+    @NonNull
+    private SlotType slot;
 
     @Getter
     @NonNull
@@ -26,4 +31,7 @@ public class Effect
 
     @Getter
     private double explosiveResistance;
+
+    @Getter
+    private double shieldBoost;
 }
