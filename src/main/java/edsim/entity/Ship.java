@@ -11,5 +11,5 @@ public class Ship
     public Module hull;
 
     @Getter
-    public List<Module> optionalInternals;
+    public List<Module> utilities;
 }

@@ -24,7 +24,7 @@ public class Effects
         return modules.stream()
             .filter(effect -> effect.getId() == id)
             .findFirst()
-            .orElseThrow(() -> new NoSuchElementException("No effect found for index: " + id));
+            .orElse(null);
     }
 
     public Effect findByName(ModuleType type, String name)

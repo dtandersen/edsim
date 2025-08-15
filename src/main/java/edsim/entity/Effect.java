@@ -34,4 +34,14 @@ public class Effect
 
     @Getter
     private double shieldBoost;
+
+    public boolean hasSlot(SlotType slotType)
+    {
+        return this.slot == slotType;
+    }
+
+    public boolean hasType(ModuleType type)
+    {
+        return this.type == type;
+    }
 }

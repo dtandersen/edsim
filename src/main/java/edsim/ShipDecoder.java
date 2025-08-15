@@ -26,39 +26,45 @@ public class ShipDecoder
 
         shipBuilder.withHull(Module.builder()
             .withType(ModuleType.ARMOUR)
-            .withBlueprint(blueprint.getType() == ModuleType.ARMOUR ? blueprint : null)
-            .withExperimental(experimental.getType() == ModuleType.ARMOUR ? experimental : null)
+            .withBlueprint(blueprint != null && blueprint.getType() == ModuleType.ARMOUR ? blueprint : null)
+            .withExperimental(experimental != null && experimental.getType() == ModuleType.ARMOUR ? experimental : null)
             .build());
 
-        int index = 2;
-
-        blueprint = blueprints.findById(data.get(2));
-        experimental = experimentals.findById(data.get(3));
-
-        if (blueprint.getSlot() != SlotType.OPTIONAL_INTERNAL)
+        List<Module> utilities = new ArrayList<>();
+        for (int i = 0; i < spec.getUtility(); i++)
         {
-            blueprint = null;
+            int blueprintId = data.get(2 + i * 2);
+            int experimentalId = data.get(2 + i * 2 + 1);
+            Module utility = loadModule(SlotType.UTILITY, blueprintId, experimentalId);
+
+            if (utility != null)
+            {
+                utilities.add(utility);
+            }
+        }
+        shipBuilder.withUtilities(utilities);
+
+        return shipBuilder.build();
+    }
+
+    private Module loadModule(SlotType slotType, int blueprintId, int experimentalId)
+    {
+        Effect blueprint = blueprints.findById(blueprintId);
+        if (blueprint == null || blueprint.getSlot() != slotType)
+        {
+            return null;
         }
 
-        if (experimental.getSlot() != SlotType.OPTIONAL_INTERNAL)
+        Effect experimental = experimentals.findById(experimentalId);
+        if (experimental != null && (!experimental.hasSlot(slotType) && experimental.hasType(blueprint.getType())))
         {
             experimental = null;
         }
 
-        if (blueprint != null || experimental != null)
-        {
-            shipBuilder.withOptionalInternals(List.of(
-                Module.builder()
-                    .withType(ModuleType.SHIELD_BOOSTER)
-                    .withBlueprint(blueprint)
-                    .withExperimental(experimental)
-                    .build()));
-        }
-        else
-        {
-            shipBuilder.withOptionalInternals(Collections.emptyList());
-        }
-
-        return shipBuilder.build();
+        return Module.builder()
+            .withType(blueprint.getType())
+            .withBlueprint(blueprint)
+            .withExperimental(experimental)
+            .build();
     }
 }

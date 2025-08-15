@@ -41,14 +41,46 @@ public class TestShipDecoder
             .withBlueprint(blueprint(ModuleType.ARMOUR, "Blast Resistant"))
             .withExperimental(experimental(ModuleType.ARMOUR, "Angled Plating"))));
 
-        assertThat(ship.optionalInternals.get(0), equalToModule(Module.builder()
+        assertThat(ship.utilities.get(0), equalToModule(Module.builder()
             .withType(ModuleType.SHIELD_BOOSTER)
             .withBlueprint(blueprint(ModuleType.SHIELD_BOOSTER, "Heavy Duty"))
             .withExperimental(experimental(ModuleType.SHIELD_BOOSTER, "Super Capacitors"))));
     }
 
     @Test
-    public void ignoresInvalidModules()
+    public void shipHasTwoOptionalInternals()
+    {
+        ShipDecoder decoder = new ShipDecoder(blueprints, experimentals);
+        ShipSpec spec = ShipSpec.builder()
+            .withUtility(2)
+            .build();
+
+        Ship ship = decoder.decode(spec, List.of(
+            idOfBlueprint(ModuleType.ARMOUR, "Heavy Duty"),
+            idOfExperimental(ModuleType.ARMOUR, "Deep Plating"),
+            idOfBlueprint(ModuleType.SHIELD_BOOSTER, "Heavy Duty"),
+            idOfExperimental(ModuleType.SHIELD_BOOSTER, "Super Capacitors"),
+            idOfBlueprint(ModuleType.SHIELD_BOOSTER, "Resistance Augmented"),
+            idOfExperimental(ModuleType.SHIELD_BOOSTER, "Thermo Block")));
+
+        assertThat(ship.hull, equalToModule(Module.builder()
+            .withType(ModuleType.ARMOUR)
+            .withBlueprint(blueprint(ModuleType.ARMOUR, "Heavy Duty"))
+            .withExperimental(experimental(ModuleType.ARMOUR, "Deep Plating"))));
+
+        assertThat(ship.utilities.get(0), equalToModule(Module.builder()
+            .withType(ModuleType.SHIELD_BOOSTER)
+            .withBlueprint(blueprint(ModuleType.SHIELD_BOOSTER, "Heavy Duty"))
+            .withExperimental(experimental(ModuleType.SHIELD_BOOSTER, "Super Capacitors"))));
+
+        assertThat(ship.utilities.get(1), equalToModule(Module.builder()
+            .withType(ModuleType.SHIELD_BOOSTER)
+            .withBlueprint(blueprint(ModuleType.SHIELD_BOOSTER, "Resistance Augmented"))
+            .withExperimental(experimental(ModuleType.SHIELD_BOOSTER, "Thermo Block"))));
+    }
+
+    @Test
+    public void skipsMismatchedModules()
     {
         ShipDecoder decoder = new ShipDecoder(blueprints, experimentals);
         ShipSpec spec = ShipSpec.builder()
@@ -64,7 +96,23 @@ public class TestShipDecoder
         assertThat(ship.hull, equalToModule(Module.builder()
             .withType(ModuleType.ARMOUR)));
 
-        assertThat(ship.optionalInternals.size(), is(0));
+        assertThat(ship.utilities.size(), is(0));
+    }
+
+    @Test
+    public void skipsInvalidIds()
+    {
+        ShipDecoder decoder = new ShipDecoder(blueprints, experimentals);
+        ShipSpec spec = ShipSpec.builder()
+            .withUtility(1)
+            .build();
+
+        Ship ship = decoder.decode(spec, List.of(9999, 9999, 9999, 9999));
+
+        assertThat(ship.hull, equalToModule(Module.builder()
+            .withType(ModuleType.ARMOUR)));
+
+        assertThat(ship.utilities.size(), is(0));
     }
 
     private Effect blueprint(ModuleType type, String name)

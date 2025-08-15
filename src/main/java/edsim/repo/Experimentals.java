@@ -38,21 +38,21 @@ public class Experimentals extends Effects
 
         add(Effect.builder()
             .withName("Blast Block")
-            .withSlot(SlotType.OPTIONAL_INTERNAL)
+            .withSlot(SlotType.UTILITY)
             .withType(ModuleType.SHIELD_BOOSTER)
             .withShieldBoost(-.01)
             .withExplosiveResistance(.02));
 
         add(Effect.builder()
             .withName("Force Block")
-            .withSlot(SlotType.OPTIONAL_INTERNAL)
+            .withSlot(SlotType.UTILITY)
             .withType(ModuleType.SHIELD_BOOSTER)
             .withShieldBoost(-.01)
             .withKineticResistance(.02));
 
         add(Effect.builder()
             .withName("Super Capacitors")
-            .withSlot(SlotType.OPTIONAL_INTERNAL)
+            .withSlot(SlotType.UTILITY)
             .withType(ModuleType.SHIELD_BOOSTER)
             .withShieldBoost(.05)
             .withKineticResistance(-.02)
@@ -61,7 +61,7 @@ public class Experimentals extends Effects
 
         add(Effect.builder()
             .withName("Thermo Block")
-            .withSlot(SlotType.OPTIONAL_INTERNAL)
+            .withSlot(SlotType.UTILITY)
             .withType(ModuleType.SHIELD_BOOSTER)
             .withShieldBoost(-.01)
             .withThermalResistance(.02));
