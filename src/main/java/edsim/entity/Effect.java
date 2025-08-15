@@ -1,5 +1,6 @@
 package edsim.entity;
 
+import java.util.*;
 import lombok.*;
 
 @Builder(setterPrefix = "with")
@@ -43,5 +44,15 @@ public class Effect
     public boolean hasType(ModuleType type)
     {
         return this.type == type;
+    }
+
+    public boolean hasName(String name)
+    {
+        return Objects.equals(this.name, name);
+    }
+
+    public boolean hasId(int id)
+    {
+        return this.id == id;
     }
 }

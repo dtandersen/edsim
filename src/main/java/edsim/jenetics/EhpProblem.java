@@ -3,17 +3,25 @@ package edsim.jenetics;
 import static io.jenetics.engine.EvolutionResult.toBestPhenotype;
 import java.util.*;
 import java.util.function.*;
+import edsim.entity.*;
 import io.jenetics.*;
 import io.jenetics.engine.*;
 import io.jenetics.util.*;
 
 public class EhpProblem implements Problem<ShipSim, IntegerGene, Integer>
 {
+    private ShipSpec shipSpec;
+
+    public EhpProblem(ShipSpec shipSpec)
+    {
+        this.shipSpec = shipSpec;
+    }
+
     @Override
     public Codec<ShipSim, IntegerGene> codec()
     {
         return Codec.of(
-            () -> Generator.createIndividual(),
+            () -> Generator.createIndividual(2 + shipSpec.getUtility() * 2),
             chromosomes -> new ShipSim(ISeq.of(chromosomes)));
     }
 
@@ -26,7 +34,7 @@ public class EhpProblem implements Problem<ShipSim, IntegerGene, Integer>
     public static void main(String[] args)
     {
         // final var board = Board.BOARD1;
-        final var problem = new EhpProblem();
+        final var problem = new EhpProblem(ShipSpec.builder().withUtility(5).build());
 
         // Crossovers like SinglePoint can be used
         var engine = Engine.builder(problem)

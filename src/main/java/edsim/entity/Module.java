@@ -7,6 +7,7 @@ import lombok.*;
 public class Module
 {
     @Getter
+    @NonNull
     private ModuleType type;
 
     @Getter

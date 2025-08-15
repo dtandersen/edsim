@@ -21,14 +21,20 @@ public class ShipDecoder
     public Ship decode(ShipSpec spec, List<Integer> data)
     {
         ShipBuilder shipBuilder = Ship.builder();
-        Effect blueprint = blueprints.findById(data.get(0));
-        Effect experimental = experimentals.findById(data.get(1));
 
-        shipBuilder.withHull(Module.builder()
-            .withType(ModuleType.ARMOUR)
-            .withBlueprint(blueprint != null && blueprint.getType() == ModuleType.ARMOUR ? blueprint : null)
-            .withExperimental(experimental != null && experimental.getType() == ModuleType.ARMOUR ? experimental : null)
-            .build());
+        Module hullModule = loadModule(SlotType.ARMOUR, data.get(0), data.get(1));
+        if (hullModule != null)
+        {
+            shipBuilder.withHull(hullModule);
+        }
+        else
+        {
+            shipBuilder.withHull(Module.builder()
+                .withType(ModuleType.ARMOUR)
+                .withBlueprint(null)
+                .withExperimental(null)
+                .build());
+        }
 
         List<Module> utilities = new ArrayList<>();
         for (int i = 0; i < spec.getUtility(); i++)

@@ -22,7 +22,7 @@ public class Effects
     public Effect findById(int id)
     {
         return modules.stream()
-            .filter(effect -> effect.getId() == id)
+            .filter(effect -> effect.hasId(id))
             .findFirst()
             .orElse(null);
     }
@@ -30,8 +30,8 @@ public class Effects
     public Effect findByName(ModuleType type, String name)
     {
         return modules.stream()
-            .filter(effect -> effect.getType() == type && effect.getName().equals(name))
+            .filter(effect -> effect.hasType(type) && effect.hasName(name))
             .findFirst()
-            .orElseThrow(() -> new NoSuchElementException("No effect found for type: " + type + " and name: " + name));
+            .orElse(null);
     }
 }

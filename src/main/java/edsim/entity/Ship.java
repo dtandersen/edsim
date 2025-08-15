@@ -12,4 +12,11 @@ public class Ship
 
     @Getter
     public List<Module> utilities;
+
+    public double getShields()
+    {
+        return utilities.stream()
+            .mapToDouble(m -> Optional.of(m.getBlueprint()).map(Effect::getShieldBoost).orElse(0.0))
+            .sum();
+    }
 }
