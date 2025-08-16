@@ -20,7 +20,13 @@ public class ShipDecoder
 
     public Ship decode(ShipSpec spec, List<Integer> data)
     {
-        ShipBuilder shipBuilder = Ship.builder();
+        ShipBuilder shipBuilder = Ship.builder()
+            // .withBaseArmour(spec.getBaseArmour())
+            // .withBulkheadHullBoost(spec.getBulkheadHullBoost())
+            .withShields(spec.getShields())
+            .withBaseShieldKineticResist(spec.getShieldKinetic())
+            .withBaseShieldThermalResist(spec.getShieldThermal())
+            .withBaseShieldExplosiveResist(spec.getShieldExplosive());
 
         Module hullModule = loadModule(SlotType.ARMOUR, data.get(0), data.get(1));
         if (hullModule != null)

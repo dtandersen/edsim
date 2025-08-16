@@ -8,9 +8,22 @@ import edsim.repo.*;
 import io.jenetics.*;
 import io.jenetics.util.*;
 
-public record ShipSim(ISeq<Chromosome<IntegerGene>> chromosomes)
+public class ShipSim
 {
-    public int getEhp()
+    private ShipSpec shipSpec;
+
+    private ISeq<Chromosome<IntegerGene>> chromosomes;
+
+    private Ship ship;
+
+    public ShipSim(ShipSpec shipSpec, ISeq<Chromosome<IntegerGene>> chromosomes)
+    {
+        this.shipSpec = shipSpec;
+        this.chromosomes = chromosomes;
+        this.ship = decode(chromosomes);
+    }
+
+    public Ship decode(ISeq<Chromosome<IntegerGene>> chromosomes)
     {
         List<Integer> data = chromosomes.stream()
             .flatMap(chromosome -> chromosome.stream())
@@ -18,7 +31,13 @@ public record ShipSim(ISeq<Chromosome<IntegerGene>> chromosomes)
             .toList();
 
         ShipDecoder decoder = new ShipDecoder(new Blueprints(), new Experimentals());
-        Ship ship = decoder.decode(ShipSpec.builder().withUtility(5).build(), data);
+        Ship ship = decoder.decode(shipSpec, data);
+
+        return ship;
+    }
+
+    public int getEhp()
+    {
         return (int)ship.getTotalShield();
     }
 
@@ -29,10 +48,14 @@ public record ShipSim(ISeq<Chromosome<IntegerGene>> chromosomes)
             .map(IntegerGene::intValue)
             .toList();
         ShipDecoder decoder = new ShipDecoder(new Blueprints(), new Experimentals());
-        Ship ship = decoder.decode(ShipSpec.builder().withUtility(5).build(), data);
+        Ship ship = decoder.decode(shipSpec, data);
 
         StringBuilder sb = new StringBuilder();
         Module hull = ship.getBulkhead();
+        sb.append(data + "\n");
+        sb.append("Kinetic   EHP: " + ship.getTotalShieldKineticEhp() + " Resist: " + ship.getTotalShieldKineticResist() * 100 + "%\n");
+        sb.append("Thermal   EHP: " + ship.getTotalShieldThermalEhp() + " Resist: " + ship.getTotalShieldThermalResist() * 100 + "%\n");
+        sb.append("Explosive EHP: " + ship.getTotalShieldExplosiveEhp() + " Resist: " + ship.getTotalShieldExplosiveResist() * 100 + "%\n");
         if (hull != null)
         {
             sb.append("Armour: " + moduleToString(hull) + "\n");
@@ -81,37 +104,16 @@ public record ShipSim(ISeq<Chromosome<IntegerGene>> chromosomes)
 
     public double getTotalShieldKineticEhp()
     {
-        List<Integer> data = chromosomes.stream()
-            .flatMap(chromosome -> chromosome.stream())
-            .map(IntegerGene::intValue)
-            .toList();
-
-        ShipDecoder decoder = new ShipDecoder(new Blueprints(), new Experimentals());
-        Ship ship = decoder.decode(ShipSpec.builder().withUtility(5).build(), data);
         return (int)ship.getTotalShieldKineticEhp();
     }
 
     public double getTotalShieldThermalEhp()
     {
-        List<Integer> data = chromosomes.stream()
-            .flatMap(chromosome -> chromosome.stream())
-            .map(IntegerGene::intValue)
-            .toList();
-
-        ShipDecoder decoder = new ShipDecoder(new Blueprints(), new Experimentals());
-        Ship ship = decoder.decode(ShipSpec.builder().withUtility(5).build(), data);
         return (int)ship.getTotalShieldThermalEhp();
     }
 
     public double getTotalShieldExplosiveEhp()
     {
-        List<Integer> data = chromosomes.stream()
-            .flatMap(chromosome -> chromosome.stream())
-            .map(IntegerGene::intValue)
-            .toList();
-
-        ShipDecoder decoder = new ShipDecoder(new Blueprints(), new Experimentals());
-        Ship ship = decoder.decode(ShipSpec.builder().withUtility(5).build(), data);
         return (int)ship.getTotalShieldExplosiveEhp();
     }
 }

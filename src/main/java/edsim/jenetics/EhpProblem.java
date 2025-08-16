@@ -2,6 +2,7 @@ package edsim.jenetics;
 
 import java.util.function.*;
 import edsim.entity.*;
+import edsim.repo.*;
 import io.jenetics.*;
 import io.jenetics.engine.*;
 import io.jenetics.ext.moea.*;
@@ -11,17 +12,20 @@ public class EhpProblem implements Problem<ShipSim, IntegerGene, Vec<double[]>>
 {
     private ShipSpec shipSpec;
 
+    private Generator generator;
+
     public EhpProblem(ShipSpec shipSpec)
     {
         this.shipSpec = shipSpec;
+        this.generator = new Generator(new Blueprints(), new Experimentals());
     }
 
     @Override
     public Codec<ShipSim, IntegerGene> codec()
     {
         return Codec.of(
-            () -> Generator.createIndividual(2 + shipSpec.getUtility() * 2),
-            chromosomes -> new ShipSim(ISeq.of(chromosomes)));
+            () -> generator.createIndividual(1 + shipSpec.getUtility()),
+            chromosomes -> new ShipSim(shipSpec, ISeq.of(chromosomes)));
     }
 
     @Override
@@ -36,16 +40,23 @@ public class EhpProblem implements Problem<ShipSim, IntegerGene, Vec<double[]>>
     public static void main(String[] args)
     {
         // final var board = Board.BOARD1;
-        final var problem = new EhpProblem(ShipSpec.builder().withUtility(5).build());
+        ShipSpec shipSpec = ShipSpec.builder()
+            .withUtility(5)
+            .withShields(349.9)
+            .withShieldKinetic(.4)
+            .withShieldThermal(-.2)
+            .withShieldExplosive(.5)
+            .build();
+        final var problem = new EhpProblem(shipSpec);
 
         // Crossovers like SinglePoint can be used
         var engine = Engine.builder(problem)
-            .optimize(Optimize.MINIMUM)
+            .optimize(Optimize.MAXIMUM)
             .alterers(
-                new SwapMutator<>(0.05)
-            // new RowCrossover(0.6)
-            // new SinglePointCrossover<>(0.3)
-            )
+                new SwapMutator<>(0.05),
+                // new RowCrossover(0.6)
+                new Mutator<>(0.05),
+                new SinglePointCrossover<>(0.3))
             .selector(new TournamentSelector<>(2))
             .populationSize(300)
             .build();
@@ -53,10 +64,10 @@ public class EhpProblem implements Problem<ShipSim, IntegerGene, Vec<double[]>>
         // final var bestPhenotypes = new ArrayList<Phenotype<IntegerGene,
         // Integer>>();
         final ISeq<Phenotype<IntegerGene, Vec<double[]>>> paretoSet = engine.stream()
-            .limit(10000)
+            .limit(20000)
             // .peek(r -> bestPhenotypes.add(r.bestPhenotype()))
             // .collect(toBestPhenotype());
-            .collect(MOEA.toParetoSet(IntRange.of(1, 5)));
+            .collect(MOEA.toParetoSet(IntRange.of(3, 10)));
         // System.out.println("Issues: " + best.fitness());
         // final ShipSim grid = problem.decode(paretoSet.);
         // System.out.println(grid);
