@@ -1,14 +1,13 @@
 package edsim.jenetics;
 
-import static io.jenetics.engine.EvolutionResult.toBestPhenotype;
-import java.util.*;
 import java.util.function.*;
 import edsim.entity.*;
 import io.jenetics.*;
 import io.jenetics.engine.*;
+import io.jenetics.ext.moea.*;
 import io.jenetics.util.*;
 
-public class EhpProblem implements Problem<ShipSim, IntegerGene, Integer>
+public class EhpProblem implements Problem<ShipSim, IntegerGene, Vec<int[]>>
 {
     private ShipSpec shipSpec;
 
@@ -26,9 +25,9 @@ public class EhpProblem implements Problem<ShipSim, IntegerGene, Integer>
     }
 
     @Override
-    public Function<ShipSim, Integer> fitness()
+    public Function<ShipSim, Vec<int[]>> fitness()
     {
-        return ShipSim::getEhp;
+        return shipSim -> Vec.of(shipSim.getEhp());
     }
 
     public static void main(String[] args)
@@ -48,13 +47,20 @@ public class EhpProblem implements Problem<ShipSim, IntegerGene, Integer>
             .populationSize(300)
             .build();
 
-        final var bestPhenotypes = new ArrayList<Phenotype<IntegerGene, Integer>>();
-        final var best = engine.stream()
+        // final var bestPhenotypes = new ArrayList<Phenotype<IntegerGene,
+        // Integer>>();
+        final ISeq<Phenotype<IntegerGene, Vec<int[]>>> paretoSet = engine.stream()
             .limit(1000)
-            .peek(r -> bestPhenotypes.add(r.bestPhenotype()))
-            .collect(toBestPhenotype());
-        System.out.println("Issues: " + best.fitness());
-        final ShipSim grid = problem.decode(best.genotype());
-        System.out.println(grid);
+            // .peek(r -> bestPhenotypes.add(r.bestPhenotype()))
+            // .collect(toBestPhenotype());
+            .collect(MOEA.toParetoSet(IntRange.of(1, 5)));
+        // System.out.println("Issues: " + best.fitness());
+        // final ShipSim grid = problem.decode(paretoSet.);
+        // System.out.println(grid);
+        for (Phenotype<IntegerGene, Vec<int[]>> phenotype : paretoSet)
+        {
+            ShipSim shipSim = problem.decode(phenotype.genotype());
+            System.out.println(shipSim);
+        }
     }
 }

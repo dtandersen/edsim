@@ -25,11 +25,11 @@ public class ShipDecoder
         Module hullModule = loadModule(SlotType.ARMOUR, data.get(0), data.get(1));
         if (hullModule != null)
         {
-            shipBuilder.withHull(hullModule);
+            shipBuilder.withBulkhead(hullModule);
         }
         else
         {
-            shipBuilder.withHull(Module.builder()
+            shipBuilder.withBulkhead(Module.builder()
                 .withType(ModuleType.ARMOUR)
                 .withBlueprint(null)
                 .withExperimental(null)

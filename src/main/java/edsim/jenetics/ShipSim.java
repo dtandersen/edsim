@@ -19,7 +19,7 @@ public record ShipSim(ISeq<Chromosome<IntegerGene>> chromosomes)
 
         ShipDecoder decoder = new ShipDecoder(new Blueprints(), new Experimentals());
         Ship ship = decoder.decode(ShipSpec.builder().withUtility(5).build(), data);
-        return (int)ship.getShields();
+        return (int)ship.getTotalShield();
     }
 
     public String toString()
@@ -32,14 +32,19 @@ public record ShipSim(ISeq<Chromosome<IntegerGene>> chromosomes)
         Ship ship = decoder.decode(ShipSpec.builder().withUtility(5).build(), data);
 
         StringBuilder sb = new StringBuilder();
-        Module hull = ship.getHull();
+        Module hull = ship.getBulkhead();
         if (hull != null)
         {
-            sb.append("Armour: " + moduleToString(hull));
+            sb.append("Armour: " + moduleToString(hull) + "\n");
         }
         else
         {
-            sb.append("Armour: -");
+            sb.append("Armour: -\n");
+        }
+
+        for (Module m : ship.getUtilities())
+        {
+            sb.append("Utility: " + moduleToString(m) + "\n");
         }
 
         return sb.toString();

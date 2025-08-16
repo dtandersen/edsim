@@ -15,4 +15,9 @@ public class Module
 
     @Getter
     private Effect experimental;
+
+    public boolean hasType(ModuleType type)
+    {
+        return this.type == type;
+    }
 }

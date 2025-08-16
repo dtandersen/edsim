@@ -38,6 +38,11 @@
             <version>8.2.0</version>
         </dependency>
         <dependency>
+            <groupId>io.jenetics</groupId>
+            <artifactId>jenetics.ext</artifactId>
+            <version>8.2.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.10.2</version>
