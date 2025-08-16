@@ -7,7 +7,7 @@ import io.jenetics.engine.*;
 import io.jenetics.ext.moea.*;
 import io.jenetics.util.*;
 
-public class EhpProblem implements Problem<ShipSim, IntegerGene, Vec<int[]>>
+public class EhpProblem implements Problem<ShipSim, IntegerGene, Vec<double[]>>
 {
     private ShipSpec shipSpec;
 
@@ -25,9 +25,12 @@ public class EhpProblem implements Problem<ShipSim, IntegerGene, Vec<int[]>>
     }
 
     @Override
-    public Function<ShipSim, Vec<int[]>> fitness()
+    public Function<ShipSim, Vec<double[]>> fitness()
     {
-        return shipSim -> Vec.of(shipSim.getEhp());
+        return shipSim -> Vec.of(
+            shipSim.getTotalShieldKineticEhp(),
+            shipSim.getTotalShieldThermalEhp(),
+            shipSim.getTotalShieldExplosiveEhp());
     }
 
     public static void main(String[] args)
@@ -49,15 +52,15 @@ public class EhpProblem implements Problem<ShipSim, IntegerGene, Vec<int[]>>
 
         // final var bestPhenotypes = new ArrayList<Phenotype<IntegerGene,
         // Integer>>();
-        final ISeq<Phenotype<IntegerGene, Vec<int[]>>> paretoSet = engine.stream()
-            .limit(1000)
+        final ISeq<Phenotype<IntegerGene, Vec<double[]>>> paretoSet = engine.stream()
+            .limit(10000)
             // .peek(r -> bestPhenotypes.add(r.bestPhenotype()))
             // .collect(toBestPhenotype());
             .collect(MOEA.toParetoSet(IntRange.of(1, 5)));
         // System.out.println("Issues: " + best.fitness());
         // final ShipSim grid = problem.decode(paretoSet.);
         // System.out.println(grid);
-        for (Phenotype<IntegerGene, Vec<int[]>> phenotype : paretoSet)
+        for (Phenotype<IntegerGene, Vec<double[]>> phenotype : paretoSet)
         {
             ShipSim shipSim = problem.decode(phenotype.genotype());
             System.out.println(shipSim);

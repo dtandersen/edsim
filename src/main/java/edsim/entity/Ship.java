@@ -121,10 +121,15 @@ public class Ship
 
     public double getTotalShieldKineticResist()
     {
-        double blueprintKineticResist = getTotalBlueprintEffect(Effect::getKineticResistance);
-        double experimentalKineticResist = getTotalExperimentalEffect(Effect::getKineticResistance);
+        Stream<Module> boosters = utilities.stream()
+            .filter(m -> m.hasType(ModuleType.SHIELD_BOOSTER));
 
-        return baseShieldKineticResist * (1 + blueprintKineticResist) * (1 + experimentalKineticResist);
+        Stream<Double> mods = boosters.map(module -> getShieldBoosterEffect(module, Effect::getKineticResistance));
+        double shieldBoosterMod = mods.reduce(1.0, (subtotal, element) -> subtotal * element);
+
+        double res = getEffectiveDamageResistance(0.0, 1 - shieldBoosterMod, baseShieldKineticResist, 0);
+
+        return res;
     }
 
     /**
@@ -140,11 +145,7 @@ public class Ship
         Stream<Double> mods = boosters.map(module -> getShieldBoosterEffect(module, Effect::getThermalResistance));
         double shieldBoosterMod = mods.reduce(1.0, (subtotal, element) -> subtotal * element);
 
-        // double blueprintThermalResist =
-        // getTotalBlueprintEffect(Effect::getThermalResistance);
-        // double experimentalThermalResist =
-        // getTotalExperimentalEffect(Effect::getThermalResistance);
-        double res = getEffectiveDamageResistance(0.0, 1 - shieldBoosterMod, -.20, 0);
+        double res = getEffectiveDamageResistance(0.0, 1 - shieldBoosterMod, baseShieldThermalResist, 0);
 
         return res;
     }
@@ -153,6 +154,7 @@ public class Ship
     {
         // https://forums.frontier.co.uk/threads/kinetic-resistance-calculation.266235/post-4230114
         // https://forums.frontier.co.uk/threads/shield-booster-mod-calculator.286097/post-4998592
+        // https://forums.frontier.co.uk/threads/this-is-how-resistance-stacking-works.439830/
         /*
          * old
          * var threshold = 30;
@@ -171,13 +173,36 @@ public class Ship
         double penalized = lo + (expected - lo) / (1 - lo) * (hi - lo);
         double actual = ((penalized >= .30) ? penalized : expected);
         return (1 - ((1 - exemptres) * (1 - actual)));
-    };
+    }
 
     public double getTotalShieldExplosiveResist()
     {
-        double blueprintExplosiveResist = getTotalBlueprintEffect(Effect::getExplosiveResistance);
-        double experimentalExplosiveResist = getTotalExperimentalEffect(Effect::getExplosiveResistance);
+        Stream<Module> boosters = utilities.stream()
+            .filter(m -> m.hasType(ModuleType.SHIELD_BOOSTER));
 
-        return baseShieldExplosiveResist * (1 + blueprintExplosiveResist) * (1 + experimentalExplosiveResist);
+        Stream<Double> mods = boosters.map(module -> getShieldBoosterEffect(module, Effect::getExplosiveResistance));
+        double shieldBoosterMod = mods.reduce(1.0, (subtotal, element) -> subtotal * element);
+
+        double res = getEffectiveDamageResistance(0.0, 1 - shieldBoosterMod, baseShieldExplosiveResist, 0);
+
+        return res;
+    }
+
+    public double getTotalShieldKineticEhp()
+    {
+        double ehp = getTotalShield() / (1 - getTotalShieldKineticResist());
+        return ehp;
+    }
+
+    public double getTotalShieldThermalEhp()
+    {
+        double ehp = getTotalShield() / (1 - getTotalShieldThermalResist());
+        return ehp;
+    }
+
+    public double getTotalShieldExplosiveEhp()
+    {
+        double ehp = getTotalShield() / (1 - getTotalShieldExplosiveResist());
+        return ehp;
     }
 }

@@ -296,4 +296,44 @@ public class TestShip extends EdSimTest
         assertThat(ship.getTotalShieldExplosiveResist(), closeTo(.653, 0.05));
         assertThat(ship.getTotalShield(), closeTo(481.5, 0.05));
     }
+
+    @Test
+    public void augmentedShieldBoostersResists2()
+    {
+        Ship ship = Ship.builder()
+            .withBaseArmour(280)
+            .withBulkheadHullBoost(.80)
+            .withShields(349.9)
+            .withBaseShieldKineticResist(.40)
+            .withBaseShieldThermalResist(-.20)
+            .withBaseShieldExplosiveResist(.50)
+            .withBulkhead(Module.builder()
+                .withType(ModuleType.ARMOUR)
+                .build())
+            .withUtilities(List.of(
+                Module.builder()
+                    .withType(ModuleType.SHIELD_BOOSTER)
+                    .withBlueprint(blueprint(ModuleType.SHIELD_BOOSTER, "Resistance Augmented"))
+                    .withExperimental(experimental(ModuleType.SHIELD_BOOSTER, "Thermo Block"))
+                    .build(),
+                Module.builder()
+                    .withType(ModuleType.SHIELD_BOOSTER)
+                    .withBlueprint(blueprint(ModuleType.SHIELD_BOOSTER, "Resistance Augmented"))
+                    .withExperimental(experimental(ModuleType.SHIELD_BOOSTER, "Blast Block"))
+                    .build(),
+                Module.builder()
+                    .withType(ModuleType.SHIELD_BOOSTER)
+                    .withBlueprint(blueprint(ModuleType.SHIELD_BOOSTER, "Resistance Augmented"))
+                    .withExperimental(experimental(ModuleType.SHIELD_BOOSTER, "Force Block"))
+                    .build()))
+            .build();
+
+        assertThat(ship.getTotalShieldKineticResist(), closeTo(62.2 / 100, 0.05));
+        assertThat(ship.getTotalShieldThermalResist(), closeTo(24.4 / 100, 0.05));
+        assertThat(ship.getTotalShieldExplosiveResist(), closeTo(68.5 / 100, 0.05));
+        assertThat(ship.getTotalShield(), closeTo(547.3, 0.5));
+        assertThat(ship.getTotalShieldKineticEhp(), closeTo(1447.4, 0.5));
+        assertThat(ship.getTotalShieldThermalEhp(), closeTo(723.7, 0.5));
+        assertThat(ship.getTotalShieldExplosiveEhp(), closeTo(1736.8, 0.5));
+    }
 }

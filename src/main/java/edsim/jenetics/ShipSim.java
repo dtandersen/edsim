@@ -78,4 +78,40 @@ public record ShipSim(ISeq<Chromosome<IntegerGene>> chromosomes)
 
         return sb.toString();
     }
+
+    public double getTotalShieldKineticEhp()
+    {
+        List<Integer> data = chromosomes.stream()
+            .flatMap(chromosome -> chromosome.stream())
+            .map(IntegerGene::intValue)
+            .toList();
+
+        ShipDecoder decoder = new ShipDecoder(new Blueprints(), new Experimentals());
+        Ship ship = decoder.decode(ShipSpec.builder().withUtility(5).build(), data);
+        return (int)ship.getTotalShieldKineticEhp();
+    }
+
+    public double getTotalShieldThermalEhp()
+    {
+        List<Integer> data = chromosomes.stream()
+            .flatMap(chromosome -> chromosome.stream())
+            .map(IntegerGene::intValue)
+            .toList();
+
+        ShipDecoder decoder = new ShipDecoder(new Blueprints(), new Experimentals());
+        Ship ship = decoder.decode(ShipSpec.builder().withUtility(5).build(), data);
+        return (int)ship.getTotalShieldThermalEhp();
+    }
+
+    public double getTotalShieldExplosiveEhp()
+    {
+        List<Integer> data = chromosomes.stream()
+            .flatMap(chromosome -> chromosome.stream())
+            .map(IntegerGene::intValue)
+            .toList();
+
+        ShipDecoder decoder = new ShipDecoder(new Blueprints(), new Experimentals());
+        Ship ship = decoder.decode(ShipSpec.builder().withUtility(5).build(), data);
+        return (int)ship.getTotalShieldExplosiveEhp();
+    }
 }
