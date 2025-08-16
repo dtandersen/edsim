@@ -34,7 +34,7 @@ public class EhpProblem implements Problem<ShipSim, IntegerGene, Vec<double[]>>
         return shipSim -> Vec.of(
             shipSim.getTotalShieldKineticEhp(),
             shipSim.getTotalShieldThermalEhp(),
-            shipSim.getTotalShieldExplosiveEhp());
+            shipSim.getTotalShieldExplosiveEhp() * .75);
     }
 
     public static void main(String[] args)
@@ -55,16 +55,19 @@ public class EhpProblem implements Problem<ShipSim, IntegerGene, Vec<double[]>>
             .alterers(
                 new SwapMutator<>(0.05),
                 // new RowCrossover(0.6)
-                new Mutator<>(0.05),
+                // new Mutator<>(0.05),
                 new SinglePointCrossover<>(0.3))
-            .selector(new TournamentSelector<>(2))
+            // .selector(new TournamentSelector<>(2))
+            .offspringSelector(new TournamentSelector<>(4))
+            // .survivorsSelector(UFTournamentSelector.ofVec())
+            .survivorsSelector(NSGA2Selector.ofVec())
             .populationSize(300)
             .build();
 
         // final var bestPhenotypes = new ArrayList<Phenotype<IntegerGene,
         // Integer>>();
         final ISeq<Phenotype<IntegerGene, Vec<double[]>>> paretoSet = engine.stream()
-            .limit(20000)
+            .limit(25000)
             // .peek(r -> bestPhenotypes.add(r.bestPhenotype()))
             // .collect(toBestPhenotype());
             .collect(MOEA.toParetoSet(IntRange.of(3, 10)));
