@@ -19,7 +19,7 @@ public class Ship
 
     @Getter
     // @NonNull
-    private double shields;
+    private double baseShields;
 
     @Getter
     private Module bulkhead;
@@ -32,6 +32,12 @@ public class Ship
 
     @Getter
     private double baseShieldExplosiveResist;
+
+    @Getter
+    private double sysPips;
+
+    @Getter
+    private double regenRate;
 
     @Getter
     private List<Module> utilities;
@@ -60,7 +66,13 @@ public class Ship
         Stream<Double> mods = boosters.map(this::getShieldBoost);
         double totalBoosterMod = mods.reduce(0.0, (subtotal, element) -> subtotal + element);
 
-        return shields * (1 + totalBoosterMod);
+        double sysMod = 0;
+        if (sysPips == 2)
+        {
+            sysMod = .5; // 1.0 / 3.0;
+        }
+
+        return baseShields * (1 + totalBoosterMod) * (1 + sysMod);
     }
 
     /**
@@ -204,5 +216,19 @@ public class Ship
     {
         double ehp = getTotalShields() / (1.0 - getTotalShieldExplosiveResist());
         return ehp;
+    }
+
+    /**
+     * Time to regenerate shields from 50% to 100%.
+     */
+    public double getRechargeTime()
+    {
+        double sysMod = 0;
+        if (sysPips == 2)
+        {
+            sysMod = .5;
+        }
+        double time = getTotalShields() / 2 / (regenRate * (1 + sysMod));
+        return time;
     }
 }

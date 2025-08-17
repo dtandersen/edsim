@@ -23,7 +23,7 @@ public class ShipDecoder
         ShipBuilder shipBuilder = Ship.builder()
             // .withBaseArmour(spec.getBaseArmour())
             // .withBulkheadHullBoost(spec.getBulkheadHullBoost())
-            .withShields(spec.getShields())
+            .withBaseShields(spec.getShields())
             .withBaseShieldKineticResist(spec.getShieldKinetic())
             .withBaseShieldThermalResist(spec.getShieldThermal())
             .withBaseShieldExplosiveResist(spec.getShieldExplosive());

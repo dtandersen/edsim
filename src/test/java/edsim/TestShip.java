@@ -21,7 +21,7 @@ public class TestShip extends EdSimTest
         Ship ship = Ship.builder()
             .withBaseArmour(280)
             .withBulkheadHullBoost(.80)
-            .withShields(1000)
+            .withBaseShields(1000)
             .withBulkhead(Module.builder()
                 .withType(ModuleType.BULKHEAD)
                 // .withBlueprint(blueprint(ModuleType.ARMOUR, "Heavy Duty"))
@@ -44,7 +44,7 @@ public class TestShip extends EdSimTest
         Ship ship = Ship.builder()
             .withBaseArmour(280)
             .withBulkheadHullBoost(.80)
-            .withShields(1000)
+            .withBaseShields(1000)
             .withBulkhead(Module.builder()
                 .withType(ModuleType.BULKHEAD)
                 .withBlueprint(blueprint(ModuleType.BULKHEAD, "Heavy Duty"))
@@ -67,7 +67,7 @@ public class TestShip extends EdSimTest
         Ship ship = Ship.builder()
             .withBaseArmour(280)
             .withBulkheadHullBoost(.80)
-            .withShields(1000)
+            .withBaseShields(1000)
             .withBulkhead(Module.builder()
                 .withType(ModuleType.BULKHEAD)
                 .withBlueprint(blueprint(ModuleType.BULKHEAD, "Heavy Duty"))
@@ -85,7 +85,7 @@ public class TestShip extends EdSimTest
         Ship ship = Ship.builder()
             .withBaseArmour(280)
             .withBulkheadHullBoost(.80)
-            .withShields(349.9)
+            .withBaseShields(349.9)
             .withBulkhead(Module.builder()
                 .withType(ModuleType.BULKHEAD)
                 // .withBlueprint(blueprint(ModuleType.ARMOUR, "Heavy Duty"))
@@ -104,7 +104,7 @@ public class TestShip extends EdSimTest
         Ship ship = Ship.builder()
             .withBaseArmour(280)
             .withBulkheadHullBoost(.80)
-            .withShields(349.9)
+            .withBaseShields(349.9)
             .withBulkhead(Module.builder()
                 .withType(ModuleType.BULKHEAD)
                 // .withBlueprint(blueprint(ModuleType.ARMOUR, "Heavy Duty"))
@@ -130,7 +130,7 @@ public class TestShip extends EdSimTest
         Ship ship = Ship.builder()
             .withBaseArmour(280)
             .withBulkheadHullBoost(.80)
-            .withShields(349.9)
+            .withBaseShields(349.9)
             .withBulkhead(Module.builder()
                 .withType(ModuleType.BULKHEAD)
                 // .withBlueprint(blueprint(ModuleType.ARMOUR, "Heavy Duty"))
@@ -155,7 +155,7 @@ public class TestShip extends EdSimTest
         Ship ship = Ship.builder()
             .withBaseArmour(280)
             .withBulkheadHullBoost(.80)
-            .withShields(349.9)
+            .withBaseShields(349.9)
             .withBulkhead(Module.builder()
                 .withType(ModuleType.BULKHEAD)
                 .build())
@@ -176,7 +176,7 @@ public class TestShip extends EdSimTest
         Ship ship = Ship.builder()
             .withBaseArmour(280)
             .withBulkheadHullBoost(.80)
-            .withShields(349.9)
+            .withBaseShields(349.9)
             .withBulkhead(Module.builder()
                 .withType(ModuleType.BULKHEAD)
                 .build())
@@ -206,7 +206,7 @@ public class TestShip extends EdSimTest
         Ship ship = Ship.builder()
             .withBaseArmour(280)
             .withBulkheadHullBoost(.80)
-            .withShields(349.9)
+            .withBaseShields(349.9)
             .withBulkhead(Module.builder()
                 .withType(ModuleType.BULKHEAD)
                 .build())
@@ -236,7 +236,7 @@ public class TestShip extends EdSimTest
         Ship ship = Ship.builder()
             .withBaseArmour(280)
             .withBulkheadHullBoost(.80)
-            .withShields(349.9)
+            .withBaseShields(349.9)
             .withBaseShieldKineticResist(.40)
             .withBaseShieldThermalResist(-.20)
             .withBaseShieldExplosiveResist(.50)
@@ -271,7 +271,7 @@ public class TestShip extends EdSimTest
         Ship ship = Ship.builder()
             .withBaseArmour(280)
             .withBulkheadHullBoost(.80)
-            .withShields(349.9)
+            .withBaseShields(349.9)
             .withBaseShieldKineticResist(.40)
             .withBaseShieldThermalResist(-.20)
             .withBaseShieldExplosiveResist(.50)
@@ -303,7 +303,7 @@ public class TestShip extends EdSimTest
         Ship ship = Ship.builder()
             .withBaseArmour(280)
             .withBulkheadHullBoost(.80)
-            .withShields(349.9)
+            .withBaseShields(349.9)
             .withBaseShieldKineticResist(.40)
             .withBaseShieldThermalResist(-.20)
             .withBaseShieldExplosiveResist(.50)
@@ -357,7 +357,7 @@ public class TestShip extends EdSimTest
         Ship ship = Ship.builder()
             // .withBaseArmour(280)
             // .withBulkheadHullBoost(.80)
-            .withShields(349.9)
+            .withBaseShields(349.9)
             .withBaseShieldKineticResist(.40)
             .withBaseShieldThermalResist(-.20)
             .withBaseShieldExplosiveResist(.50)
@@ -401,5 +401,54 @@ public class TestShip extends EdSimTest
         // assertThat(ship.getTotalShieldKineticEhp(), closeTo(1447.4, 0.5));
         // assertThat(ship.getTotalShieldThermalEhp(), closeTo(723.7, 0.5));
         // assertThat(ship.getTotalShieldExplosiveEhp(), closeTo(1736.8, 0.5));
+    }
+
+    @Test
+    public void shieldRechargeTime()
+    {
+        Ship ship = Ship.builder()
+            .withBaseShields(349.9)
+            .withSysPips(2)
+            .withRegenRate(3.2)
+            .withBaseShieldKineticResist(.40)
+            .withBaseShieldThermalResist(-.20)
+            .withBaseShieldExplosiveResist(.50)
+            .withBulkhead(Module.builder()
+                .withType(ModuleType.BULKHEAD)
+                .withBlueprint(blueprint(ModuleType.BULKHEAD, "Heavy Duty"))
+                .withExperimental(experimental(ModuleType.BULKHEAD, "Deep Plating"))
+                .build())
+            .withUtilities(Collections.emptyList())
+            .build();
+
+        assertThat(ship.getTotalShields(), closeTo(524.5, 0.5));
+        assertThat(ship.getRechargeTime(), closeTo(55.0, 0.5));
+
+    }
+
+    @Test
+    public void shieldRechargeTimeWithBoosters()
+    {
+        Ship ship = Ship.builder()
+            .withBaseShields(349.9)
+            .withSysPips(2)
+            .withRegenRate(3.2)
+            .withBaseShieldKineticResist(.40)
+            .withBaseShieldThermalResist(-.20)
+            .withBaseShieldExplosiveResist(.50)
+            .withBulkhead(Module.builder()
+                .withType(ModuleType.BULKHEAD)
+                .build())
+            .withUtilities(List.of(
+                Module.builder()
+                    .withType(ModuleType.SHIELD_BOOSTER)
+                    .build(),
+                Module.builder()
+                    .withType(ModuleType.SHIELD_BOOSTER)
+                    .build()))
+            .build();
+
+        assertThat(ship.getTotalShields(), closeTo(734.3, 0.5));
+        assertThat(ship.getRechargeTime(), closeTo(60 + 17, 0.5));
     }
 }
