@@ -36,7 +36,7 @@ public class ShipDecoder
         else
         {
             shipBuilder.withBulkhead(Module.builder()
-                .withType(ModuleType.ARMOUR)
+                .withType(ModuleType.BULKHEAD)
                 .withBlueprint(null)
                 .withExperimental(null)
                 .build());
@@ -68,7 +68,7 @@ public class ShipDecoder
         }
 
         Effect experimental = experimentals.findById(experimentalId);
-        if (experimental != null && (!experimental.hasSlot(slotType) && experimental.hasType(blueprint.getType())))
+        if (experimental != null && (!experimental.hasSlot(slotType) || !experimental.hasType(blueprint.getType())))
         {
             experimental = null;
         }

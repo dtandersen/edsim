@@ -1,5 +1,6 @@
 package edsim.jenetics;
 
+import java.util.*;
 import java.util.function.*;
 import edsim.entity.*;
 import edsim.repo.*;
@@ -33,8 +34,15 @@ public class EhpProblem implements Problem<ShipSim, IntegerGene, Vec<double[]>>
     {
         return shipSim -> Vec.of(
             shipSim.getTotalShieldKineticEhp(),
-            shipSim.getTotalShieldThermalEhp(),
-            shipSim.getTotalShieldExplosiveEhp() * .75);
+            shipSim.getTotalShieldThermalEhp()
+        // -shipSim.getTotalShieldExplosiveEhp()
+        // Math.min(shipSim.getTotalShieldKineticEhp(),
+        // shipSim.getTotalShieldThermalEhp())
+        // Math.min(shipSim.getTotalShieldKineticEhp(),
+        // Math.min(shipSim.getTotalShieldThermalEhp(),
+        // shipSim.getTotalShieldExplosiveEhp()))
+        // shipSim.getTotalShields()
+        );
     }
 
     public static void main(String[] args)
@@ -43,25 +51,28 @@ public class EhpProblem implements Problem<ShipSim, IntegerGene, Vec<double[]>>
         ShipSpec shipSpec = ShipSpec.builder()
             .withUtility(5)
             .withShields(349.9)
-            .withShieldKinetic(.4)
-            .withShieldThermal(-.2)
-            .withShieldExplosive(.5)
+            .withShieldKinetic(26.9 / 100.0)
+            .withShieldThermal(39.1 / 100.0)
+            .withShieldExplosive(49.3 / 100.0)
             .build();
         final var problem = new EhpProblem(shipSpec);
 
         // Crossovers like SinglePoint can be used
         var engine = Engine.builder(problem)
-            .optimize(Optimize.MAXIMUM)
+            // .optimize(Optimize.MAXIMUM)
             .alterers(
-                new SwapMutator<>(0.05),
+                new SwapMutator<>(0.03),
                 // new RowCrossover(0.6)
-                // new Mutator<>(0.05),
-                new SinglePointCrossover<>(0.3))
+                new Mutator<>(0.03),
+                new SinglePointCrossover<>(0.3)
+            // new MeanAlterer<>()
+            )
             // .selector(new TournamentSelector<>(2))
-            .offspringSelector(new TournamentSelector<>(4))
-            // .survivorsSelector(UFTournamentSelector.ofVec())
-            .survivorsSelector(NSGA2Selector.ofVec())
-            .populationSize(300)
+            .offspringSelector(new TournamentSelector<>(5))
+            .survivorsSelector(UFTournamentSelector.ofVec())
+            // .survivorsSelector(NSGA2Selector.ofVec())
+            .maximizing()
+            .populationSize(500)
             .build();
 
         // final var bestPhenotypes = new ArrayList<Phenotype<IntegerGene,
@@ -70,14 +81,25 @@ public class EhpProblem implements Problem<ShipSim, IntegerGene, Vec<double[]>>
             .limit(25000)
             // .peek(r -> bestPhenotypes.add(r.bestPhenotype()))
             // .collect(toBestPhenotype());
-            .collect(MOEA.toParetoSet(IntRange.of(3, 10)));
+            .collect(MOEA.toParetoSet(IntRange.of(10, 100)));
         // System.out.println("Issues: " + best.fitness());
         // final ShipSim grid = problem.decode(paretoSet.);
         // System.out.println(grid);
+        ArrayList<ShipSim> ships = new ArrayList<>();
         for (Phenotype<IntegerGene, Vec<double[]>> phenotype : paretoSet)
         {
             ShipSim shipSim = problem.decode(phenotype.genotype());
-            System.out.println(shipSim);
+            ships.add(shipSim);
+            // System.out.println(shipSim);
+        }
+
+        ships.sort(Comparator.comparingDouble(ShipSim::minEhp));
+        // ships.sort(Comparator.reverseOrder());
+
+        // Print the sorted ships
+        for (ShipSim ship : ships)
+        {
+            System.out.println(ship);
         }
     }
 }

@@ -31,15 +31,15 @@ public class TestShipDecoder
             .build();
 
         Ship ship = decoder.decode(spec, List.of(
-            idOfBlueprint(ModuleType.ARMOUR, "Blast Resistant"),
-            idOfExperimental(ModuleType.ARMOUR, "Angled Plating"),
+            idOfBlueprint(ModuleType.BULKHEAD, "Blast Resistant"),
+            idOfExperimental(ModuleType.BULKHEAD, "Angled Plating"),
             idOfBlueprint(ModuleType.SHIELD_BOOSTER, "Heavy Duty"),
             idOfExperimental(ModuleType.SHIELD_BOOSTER, "Super Capacitors")));
 
         assertThat(ship.getBulkhead(), equalToModule(Module.builder()
-            .withType(ModuleType.ARMOUR)
-            .withBlueprint(blueprint(ModuleType.ARMOUR, "Blast Resistant"))
-            .withExperimental(experimental(ModuleType.ARMOUR, "Angled Plating"))));
+            .withType(ModuleType.BULKHEAD)
+            .withBlueprint(blueprint(ModuleType.BULKHEAD, "Blast Resistant"))
+            .withExperimental(experimental(ModuleType.BULKHEAD, "Angled Plating"))));
 
         assertThat(ship.getUtilities().get(0), equalToModule(Module.builder()
             .withType(ModuleType.SHIELD_BOOSTER)
@@ -56,17 +56,17 @@ public class TestShipDecoder
             .build();
 
         Ship ship = decoder.decode(spec, List.of(
-            idOfBlueprint(ModuleType.ARMOUR, "Heavy Duty"),
-            idOfExperimental(ModuleType.ARMOUR, "Deep Plating"),
+            idOfBlueprint(ModuleType.BULKHEAD, "Heavy Duty"),
+            idOfExperimental(ModuleType.BULKHEAD, "Deep Plating"),
             idOfBlueprint(ModuleType.SHIELD_BOOSTER, "Heavy Duty"),
             idOfExperimental(ModuleType.SHIELD_BOOSTER, "Super Capacitors"),
             idOfBlueprint(ModuleType.SHIELD_BOOSTER, "Resistance Augmented"),
             idOfExperimental(ModuleType.SHIELD_BOOSTER, "Thermo Block")));
 
         assertThat(ship.getBulkhead(), equalToModule(Module.builder()
-            .withType(ModuleType.ARMOUR)
-            .withBlueprint(blueprint(ModuleType.ARMOUR, "Heavy Duty"))
-            .withExperimental(experimental(ModuleType.ARMOUR, "Deep Plating"))));
+            .withType(ModuleType.BULKHEAD)
+            .withBlueprint(blueprint(ModuleType.BULKHEAD, "Heavy Duty"))
+            .withExperimental(experimental(ModuleType.BULKHEAD, "Deep Plating"))));
 
         assertThat(ship.getUtilities().get(0), equalToModule(Module.builder()
             .withType(ModuleType.SHIELD_BOOSTER)
@@ -80,7 +80,7 @@ public class TestShipDecoder
     }
 
     @Test
-    public void skipsMismatchedModules()
+    public void dontAllowShieldBoosterInArmourSlot()
     {
         ShipDecoder decoder = new ShipDecoder(blueprints, experimentals);
         ShipSpec spec = ShipSpec.builder()
@@ -90,13 +90,39 @@ public class TestShipDecoder
         Ship ship = decoder.decode(spec, List.of(
             idOfBlueprint(ModuleType.SHIELD_BOOSTER, "Heavy Duty"),
             idOfExperimental(ModuleType.SHIELD_BOOSTER, "Super Capacitors"),
-            idOfBlueprint(ModuleType.ARMOUR, "Blast Resistant"),
-            idOfExperimental(ModuleType.ARMOUR, "Angled Plating")));
+            idOfBlueprint(ModuleType.BULKHEAD, "Blast Resistant"),
+            idOfExperimental(ModuleType.BULKHEAD, "Angled Plating")));
 
         assertThat(ship.getBulkhead(), equalToModule(Module.builder()
-            .withType(ModuleType.ARMOUR)));
+            .withType(ModuleType.BULKHEAD)));
 
         assertThat(ship.getUtilities().size(), is(0));
+    }
+
+    @Test
+    public void dontAllowBulkheadExperimentalInShieldBooster()
+    {
+        ShipDecoder decoder = new ShipDecoder(blueprints, experimentals);
+        ShipSpec spec = ShipSpec.builder()
+            .withUtility(1)
+            .build();
+
+        Ship ship = decoder.decode(spec, List.of(
+            idOfBlueprint(ModuleType.BULKHEAD, "Blast Resistant"),
+            idOfExperimental(ModuleType.BULKHEAD, "Angled Plating"),
+            idOfBlueprint(ModuleType.SHIELD_BOOSTER, "Heavy Duty"),
+            idOfExperimental(ModuleType.BULKHEAD, "Angled Plating")));
+
+        // assertThat(ship.getBulkhead(), equalToModule(Module.builder()
+        // .withType(ModuleType.BULKHEAD)));
+
+        assertThat(ship.getUtilities().get(0), is(
+            equalToModule(Module.builder()
+                .withType(ModuleType.SHIELD_BOOSTER)
+                .withBlueprint(blueprint(ModuleType.SHIELD_BOOSTER, "Heavy Duty"))
+                .withExperimental(null))
+
+        ));
     }
 
     @Test
@@ -110,7 +136,7 @@ public class TestShipDecoder
         Ship ship = decoder.decode(spec, List.of(9999, 9999, 9999, 9999));
 
         assertThat(ship.getBulkhead(), equalToModule(Module.builder()
-            .withType(ModuleType.ARMOUR)));
+            .withType(ModuleType.BULKHEAD)));
 
         assertThat(ship.getUtilities().size(), is(0));
     }

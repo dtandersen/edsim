@@ -9,7 +9,7 @@ public class Blueprints extends Effects
         add(Effect.builder()
             .withName("Blast Resistant")
             .withSlot(SlotType.ARMOUR)
-            .withType(ModuleType.ARMOUR)
+            .withType(ModuleType.BULKHEAD)
             .withKineticResistance(-.12)
             .withThermalResistance(-.12)
             .withExplosiveResistance(.40));
@@ -17,7 +17,7 @@ public class Blueprints extends Effects
         add(Effect.builder()
             .withName("Heavy Duty")
             .withSlot(SlotType.ARMOUR)
-            .withType(ModuleType.ARMOUR)
+            .withType(ModuleType.BULKHEAD)
             .withHullBoost(.32)
             .withKineticResistance(.05)
             .withThermalResistance(.05)
@@ -26,7 +26,7 @@ public class Blueprints extends Effects
         add(Effect.builder()
             .withName("Kinetic Resistant")
             .withSlot(SlotType.ARMOUR)
-            .withType(ModuleType.ARMOUR)
+            .withType(ModuleType.BULKHEAD)
             .withKineticResistance(.40)
             .withThermalResistance(-.12)
             .withExplosiveResistance(-.12));
@@ -34,7 +34,7 @@ public class Blueprints extends Effects
         add(Effect.builder()
             .withName("Lightweight")
             .withSlot(SlotType.ARMOUR)
-            .withType(ModuleType.ARMOUR)
+            .withType(ModuleType.BULKHEAD)
             .withHullBoost(-.05)
             .withKineticResistance(.15)
             .withThermalResistance(.15)
@@ -43,7 +43,7 @@ public class Blueprints extends Effects
         add(Effect.builder()
             .withName("Thermal Resistant")
             .withSlot(SlotType.ARMOUR)
-            .withType(ModuleType.ARMOUR)
+            .withType(ModuleType.BULKHEAD)
             .withKineticResistance(-.12)
             .withThermalResistance(.40)
             .withExplosiveResistance(-.12));
@@ -77,5 +77,34 @@ public class Blueprints extends Effects
             .withKineticResistance(-.04)
             .withThermalResistance(.27)
             .withExplosiveResistance(-.04));
+
+        add(Effect.builder()
+            .withName("Enhanced, Low Power")
+            .withSlot(SlotType.OPTIONAL_INTERNAL)
+            .withType(ModuleType.SHIELD_GENERATOR));
+
+        add(Effect.builder()
+            .withName("Kinetic Resistant")
+            .withSlot(SlotType.OPTIONAL_INTERNAL)
+            .withType(ModuleType.SHIELD_GENERATOR)
+            .withKineticResistance(.50)
+            .withThermalResistance(-.15)
+            .withExplosiveResistance(0));
+
+        add(Effect.builder()
+            .withName("Reinforced")
+            .withSlot(SlotType.OPTIONAL_INTERNAL)
+            .withType(ModuleType.SHIELD_GENERATOR)
+            .withKineticResistance(.165)
+            .withThermalResistance(.165)
+            .withExplosiveResistance(.165));
+
+        add(Effect.builder()
+            .withName("Thermal Resistant")
+            .withSlot(SlotType.OPTIONAL_INTERNAL)
+            .withType(ModuleType.SHIELD_GENERATOR)
+            .withKineticResistance(-.20)
+            .withThermalResistance(.50)
+            .withExplosiveResistance(0));
     }
 }

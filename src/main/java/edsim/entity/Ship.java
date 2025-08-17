@@ -52,7 +52,7 @@ public class Ship
         return baseArmour * (1 + bulkheadHullBoost) * (1 + blueprintHullboost) * (1 + experimentalHullboost);
     }
 
-    public double getTotalShield()
+    public double getTotalShields()
     {
         Stream<Module> boosters = utilities.stream()
             .filter(m -> m.hasType(ModuleType.SHIELD_BOOSTER));
@@ -190,19 +190,19 @@ public class Ship
 
     public double getTotalShieldKineticEhp()
     {
-        double ehp = getTotalShield() / (1 - getTotalShieldKineticResist());
+        double ehp = getTotalShields() / (1.0 - getTotalShieldKineticResist());
         return ehp;
     }
 
     public double getTotalShieldThermalEhp()
     {
-        double ehp = getTotalShield() / (1 - getTotalShieldThermalResist());
+        double ehp = getTotalShields() / (1.0 - getTotalShieldThermalResist());
         return ehp;
     }
 
     public double getTotalShieldExplosiveEhp()
     {
-        double ehp = getTotalShield() / (1 - getTotalShieldExplosiveResist());
+        double ehp = getTotalShields() / (1.0 - getTotalShieldExplosiveResist());
         return ehp;
     }
 }

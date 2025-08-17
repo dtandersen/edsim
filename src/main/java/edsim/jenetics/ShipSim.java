@@ -12,18 +12,18 @@ public class ShipSim
 {
     private ShipSpec shipSpec;
 
-    private ISeq<Chromosome<IntegerGene>> chromosomes;
+    // private ISeq<Chromosome<IntegerGene>> chromosomes;
 
     private Ship ship;
 
     public ShipSim(ShipSpec shipSpec, ISeq<Chromosome<IntegerGene>> chromosomes)
     {
         this.shipSpec = shipSpec;
-        this.chromosomes = chromosomes;
+        // this.chromosomes = chromosomes;
         this.ship = decode(chromosomes);
     }
 
-    public Ship decode(ISeq<Chromosome<IntegerGene>> chromosomes)
+    private Ship decode(ISeq<Chromosome<IntegerGene>> chromosomes)
     {
         List<Integer> data = chromosomes.stream()
             .flatMap(chromosome -> chromosome.stream())
@@ -36,26 +36,45 @@ public class ShipSim
         return ship;
     }
 
-    public int getEhp()
-    {
-        return (int)ship.getTotalShield();
-    }
-
     public String toString()
     {
-        List<Integer> data = chromosomes.stream()
-            .flatMap(chromosome -> chromosome.stream())
-            .map(IntegerGene::intValue)
-            .toList();
-        ShipDecoder decoder = new ShipDecoder(new Blueprints(), new Experimentals());
-        Ship ship = decoder.decode(shipSpec, data);
+        // List<Integer> data = chromosomes.stream()
+        // .flatMap(chromosome -> chromosome.stream())
+        // .map(IntegerGene::intValue)
+        // .toList();
+        // ShipDecoder decoder = new ShipDecoder(new Blueprints(), new
+        // Experimentals());
+        // Ship ship = decoder.decode(shipSpec, data);
 
         StringBuilder sb = new StringBuilder();
         Module hull = ship.getBulkhead();
-        sb.append(data + "\n");
-        sb.append("Kinetic   EHP: " + ship.getTotalShieldKineticEhp() + " Resist: " + ship.getTotalShieldKineticResist() * 100 + "%\n");
-        sb.append("Thermal   EHP: " + ship.getTotalShieldThermalEhp() + " Resist: " + ship.getTotalShieldThermalResist() * 100 + "%\n");
-        sb.append("Explosive EHP: " + ship.getTotalShieldExplosiveEhp() + " Resist: " + ship.getTotalShieldExplosiveResist() * 100 + "%\n");
+        String output = """
+            Genes:     %9$s
+            Armour:    %1$.1f
+            Shields:   %2$.1f
+            Kinetic    Resist: %3$6.1f%%  EHP: %6$.0f
+            Thermal    Resist: %4$6.1f%%  EHP: %7$.0f
+            Explosive  Resist: %5$6.1f%%  EHP: %8$.0f
+            """;
+        sb.append(String.format(output,
+            ship.getTotalArmour(),
+            ship.getTotalShields(),
+            ship.getTotalShieldKineticResist() * 100,
+            ship.getTotalShieldThermalResist() * 100,
+            ship.getTotalShieldExplosiveResist() * 100,
+            ship.getTotalShieldKineticEhp(),
+            ship.getTotalShieldThermalEhp(),
+            ship.getTotalShieldExplosiveEhp(),
+            new ArrayList<>()));
+        // sb.append(data + "\n");
+        // sb.append("Armour: " + ship.getTotalArmour() + " Shields: " +
+        // ship.getTotalShields() + "\n");
+        // sb.append("Kinetic EHP: " + ship.getTotalShieldKineticEhp() + "
+        // Resist: " + ship.getTotalShieldKineticResist() * 100 + "%\n");
+        // sb.append("Thermal EHP: " + ship.getTotalShieldThermalEhp() + "
+        // Resist: " + ship.getTotalShieldThermalResist() * 100 + "%\n");
+        // sb.append("Explosive EHP: " + ship.getTotalShieldExplosiveEhp() + "
+        // Resist: " + ship.getTotalShieldExplosiveResist() * 100 + "%\n");
         if (hull != null)
         {
             sb.append("Armour: " + moduleToString(hull) + "\n");
@@ -104,16 +123,31 @@ public class ShipSim
 
     public double getTotalShieldKineticEhp()
     {
-        return (int)ship.getTotalShieldKineticEhp();
+        return ship.getTotalShieldKineticEhp();
     }
 
     public double getTotalShieldThermalEhp()
     {
-        return (int)ship.getTotalShieldThermalEhp();
+        return ship.getTotalShieldThermalEhp();
     }
 
     public double getTotalShieldExplosiveEhp()
     {
-        return (int)ship.getTotalShieldExplosiveEhp();
+        return ship.getTotalShieldExplosiveEhp();
+    }
+
+    public double getTotalShields()
+    {
+        return ship.getTotalShields();
+    }
+
+    public double averageEhp()
+    {
+        return (ship.getTotalShieldKineticEhp() + ship.getTotalShieldThermalEhp() + ship.getTotalShieldExplosiveEhp()) / 3.0;
+    }
+
+    public double minEhp()
+    {
+        return Math.min(ship.getTotalShieldKineticEhp(), Math.min(ship.getTotalShieldThermalEhp(), ship.getTotalShieldExplosiveEhp()));
     }
 }

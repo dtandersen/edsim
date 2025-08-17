@@ -2,6 +2,7 @@ package edsim.entity;
 
 public enum ModuleType
 {
-    ARMOUR,
-    SHIELD_BOOSTER
+    BULKHEAD,
+    SHIELD_BOOSTER,
+    SHIELD_GENERATOR
 }
